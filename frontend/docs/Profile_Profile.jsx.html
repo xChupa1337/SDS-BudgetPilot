@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Profile/Profile.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Profile/Profile.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Profile.jsx
+ * @description Компонент профілю користувача для зміни паролю, email та кодового слова.
+ * Забезпечує взаємодію з API для оновлення даних профілю та відображає сповіщення про успіх чи помилки.
+ * Використовує бібліотеку Axios для обробки запитів API
+ * та Toastify для сповіщень.
+ */
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import styles from "./Profile.module.css";
+
+/**
+ * Максимальна кількість одночасних сповіщень.
+ * @constant {number}
+ */
+const MAX_TOASTS = 2;
+
+/**
+ * Черга для зберігання ID сповіщень.
+ * @type {Array&lt;string>}
+ */
+let toastQueue = [];
+
+/**
+ * Компонент профілю користувача.
+ * Дозволяє змінювати пароль та email.
+ *
+ * @component
+ * @returns {JSX.Element} Компонент профілю користувача
+ */
+const Profile = () => {
+  /**
+   * Стан паролю користувача.
+   * @type {Array}
+   */
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  
+  /**
+   * Стан email користувача.
+   * @type {Array}
+   */
+  const [oldEmail, setOldEmail] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  
+  /**
+   * Стан кодового слова для безпеки.
+   * @type {Array}
+   */
+  const [codeword, setCodeword] = useState("");
+
+  /**
+   * Стан даних користувача.
+   * @type {Object}
+   */
+  const [userData, setUserData] = useState(null);
+
+  /**
+   * Завантажує дані профілю з API.
+   * Викликається при монтуванні компонента.
+   */
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/profile")
+      .then((response) => setUserData(response.data))
+      .catch((error) => {
+        addToast(error.response?.data?.message || "Не вдалося завантажити дані профілю", "error");
+      });
+  }, []);
+
+  /**
+   * Додає сповіщення до черги, перевіряючи, чи не перевищено ліміт.
+   * 
+   * @param {string} message - Текст сповіщення
+   * @param {"info" | "success" | "error"} [type="info"] - Тип сповіщення
+   */
+  const addToast = (message, type = "info") => {
+    if (toastQueue.length >= MAX_TOASTS) {
+      const firstToast = toastQueue.shift();
+      toast.dismiss(firstToast);
+    }
+    const toastId = toast[type](message);
+    toastQueue.push(toastId);
+  };
+
+  /**
+   * Обробник зміни паролю.
+   */
+  const handlePasswordChange = async () => {
+    try {
+      await axios.put("http://localhost:5000/api/profile/change-password", {
+        oldPassword,
+        newPassword,
+        codeword,
+      });
+      addToast("Пароль успішно змінено", "success");
+    } catch (error) {
+      addToast(error.response?.data?.message || "Не вдалося змінити пароль", "error");
+    }
+  };
+
+  /**
+   * Обробник зміни email.
+   */
+  const handleEmailChange = async () => {
+    try {
+      await axios.put("http://localhost:5000/api/profile/change-email", {
+        oldEmail,
+        newEmail,
+      });
+      addToast("Email успішно змінено", "success");
+    } catch (error) {
+      addToast(error.response?.data?.message || "Не вдалося змінити email", "error");
+    }
+  };
+
+  return (
+    &lt;div className={styles.profileContainer}>
+      &lt;h2>Профіль користувача&lt;/h2>
+      {userData &amp;&amp; &lt;p>Ласкаво просимо, {userData.username}&lt;/p>}
+      
+      &lt;div className={styles.formGroup}>
+        &lt;h3>Змінити пароль&lt;/h3>
+        &lt;input
+          type="password"
+          placeholder="Старий пароль"
+          value={oldPassword}
+          onChange={(e) => setOldPassword(e.target.value)}
+          className={styles.input}
+        />
+        &lt;input
+          type="password"
+          placeholder="Новий пароль"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          className={styles.input}
+        />
+        &lt;input
+          type="text"
+          placeholder="Кодове слово"
+          value={codeword}
+          onChange={(e) => setCodeword(e.target.value)}
+          className={styles.input}
+        />
+        &lt;button onClick={handlePasswordChange} className={styles.button}>
+          Змінити пароль
+        &lt;/button>
+      &lt;/div>
+
+      &lt;div className={styles.formGroup}>
+        &lt;h3>Змінити Email&lt;/h3>
+        &lt;input
+          type="email"
+          placeholder="Старий Email"
+          value={oldEmail}
+          onChange={(e) => setOldEmail(e.target.value)}
+          className={styles.input}
+        />
+        &lt;input
+          type="email"
+          placeholder="Новий Email"
+          value={newEmail}
+          onChange={(e) => setNewEmail(e.target.value)}
+          className={styles.input}
+        />
+        &lt;button onClick={handleEmailChange} className={styles.button}>
+          Змінити Email
+        &lt;/button>
+      &lt;/div>
+
+      &lt;ToastContainer
+        position="bottom-center"
+        autoClose={3000}
+        hideProgressBar
+        closeOnClick
+        pauseOnHover
+      />
+    &lt;/div>
+  );
+};
+
+export default Profile;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#MAX_TOASTS">MAX_TOASTS</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Records">Records</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#toastQueue">toastQueue</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Feb 07 2025 16:55:02 GMT+0200 (Израиль, стандартное время)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

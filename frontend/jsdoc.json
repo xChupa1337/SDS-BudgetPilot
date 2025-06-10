@@ -1,0 +1,10 @@
+{
+  "source": {
+    "include": ["src/pages/Records/Records.jsx", "src/pages/Login", "src/pages/Register", "src/pages/Profile",  "src/pages/Errors"],
+    "includePattern": ".+\\.jsx?$",
+    "exclude": ["node_modules"]
+  },
+  "opts": {
+    "destination": "./docs"
+  }
+}

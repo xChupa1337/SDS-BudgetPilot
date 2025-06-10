@@ -1,0 +1,48 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "jsdoc": "jsdoc -c jsdoc.json"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "^3.2.4",
+    "@storybook/addon-essentials": "^8.5.3",
+    "@storybook/addon-interactions": "^8.5.3",
+    "@storybook/addon-onboarding": "^8.5.3",
+    "@storybook/blocks": "^8.5.3",
+    "@storybook/react": "^8.5.3",
+    "@storybook/react-vite": "^8.5.3",
+    "@storybook/test": "^8.5.3",
+    "jsdoc": "^4.0.4",
+    "jsdoc-jsx": "^0.1.0",
+    "prop-types": "^15.8.1",
+    "storybook": "^8.5.3",
+    "vite": "^6.1.0"
+  },
+  "dependencies": {
+    "@storybook/jest": "^0.2.2",
+    "@storybook/testing-library": "^0.2.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "axios": "^1.7.9",
+    "chart.js": "^4.4.7",
+    "clsx": "^2.1.1",
+    "react": "^18.3.1",
+    "react-cookie-consent": "^9.0.0",
+    "react-dom": "^18.3.1",
+    "react-helmet": "^6.1.0",
+    "react-helmet-async": "^2.0.5",
+    "react-icons": "^5.4.0",
+    "react-modal": "^3.16.3",
+    "react-router-dom": "^7.1.1",
+    "react-toastify": "^11.0.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
